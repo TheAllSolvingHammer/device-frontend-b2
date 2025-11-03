@@ -1,6 +1,5 @@
 import type { Route } from './+types/home'
 import { Welcome } from '../welcome/welcome'
-import { resources } from '~/data/resources'
 import { Counter } from '~/components/Counter'
 
 export function meta({}: Route.MetaArgs) {
@@ -12,7 +11,7 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
   return (
-    <Welcome resources={resources}>
+    <Welcome>
       <Counter />
     </Welcome>
   )

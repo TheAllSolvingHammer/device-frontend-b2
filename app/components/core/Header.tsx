@@ -1,5 +1,3 @@
-'use client'
-
 import { Link, useNavigate } from 'react-router'
 import { useAuth } from '../auth/AuthProvider'
 import { Button } from '../ui/button'

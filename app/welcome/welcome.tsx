@@ -1,13 +1,11 @@
-import type { Resource } from '~/models/resources.model'
 import type { ReactNode } from 'react'
 import { Header } from '~/components/core/Header'
 
 type WelcomeProps = {
-  resources: Resource[]
   children?: ReactNode
 }
 
-export function Welcome({ resources, children }: WelcomeProps) {
+export function Welcome({ children }: WelcomeProps) {
   return (
     <>
       <Header />
