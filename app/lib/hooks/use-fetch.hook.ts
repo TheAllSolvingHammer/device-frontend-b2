@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { FetchMethod } from './fetch.models'
 import { useAuth } from '~/components/auth/AuthProvider'
+import type { FetchMethod } from '~/models/fetch.models'
 
 export default function useFetch<TData = unknown>() {
   const abortControllerRef = useRef<AbortController | null>(null)
@@ -50,7 +50,7 @@ export default function useFetch<TData = unknown>() {
 
         return data
       } catch (error) {
-        setError(new Error())
+        setError(error as Error)
         throw error
       } finally {
         isLoadingRef.current = false

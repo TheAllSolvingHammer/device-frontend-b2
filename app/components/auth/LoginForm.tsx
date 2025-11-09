@@ -10,27 +10,21 @@ import {
 import { Button } from '../ui/button'
 import { Field, FieldError, FieldGroup, FieldLabel } from '../ui/field'
 import { Input } from '../ui/input'
-import { useLocation, useNavigate } from 'react-router'
+import { Navigate, useLocation, useNavigate } from 'react-router'
 import { useAuth } from './AuthProvider'
 import useFetch from '~/lib/hooks/use-fetch.hook'
 import { getApiUrl } from '~/lib/utils'
-import { useEffect } from 'react'
 import {
   loginSchema,
   type LoginData,
   type LoginResponse,
 } from '~/models/auth.models'
+import { Spinner } from '../ui/spinner'
 
 export function LoginForm() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { token, login } = useAuth()
-
-  useEffect(() => {
-    if (token) {
-      navigate('/', { replace: true })
-    }
-  }, [token])
+  const { isAuthenticated, login } = useAuth()
 
   const from = location.state?.from?.pathname || '/'
 
@@ -43,6 +37,10 @@ export function LoginForm() {
       password: '',
     },
   })
+
+  if (isAuthenticated) {
+    return <Navigate to='/' replace />
+  }
 
   const onSubmit = async (data: LoginData) => {
     if (isLoadingRef.current) {
@@ -119,7 +117,13 @@ export function LoginForm() {
       </CardContent>
       <CardFooter>
         <Field orientation='horizontal'>
-          <Button className='w-full' type='submit' form='login-form'>
+          <Button
+            className='w-full'
+            type='submit'
+            form='login-form'
+            disabled={isLoadingRef.current}
+          >
+            {isLoadingRef.current && <Spinner />}
             Вход
           </Button>
         </Field>

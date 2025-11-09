@@ -6,9 +6,9 @@ import {
   useEffect,
 } from 'react'
 import type { LoginResponse } from '~/models/auth.models'
-import type { User } from '~/models/user.model'
+import type { User } from '~/models/user.models'
 
-interface AuthContextType {
+type AuthContext = {
   user: User | null
   token: string | null
   login: (loginResponse: LoginResponse) => void
@@ -16,9 +16,13 @@ interface AuthContextType {
   isAuthenticated: boolean
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
+const AuthContext = createContext<AuthContext | null>(null)
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+type AuthProviderProps = {
+  children: ReactNode
+}
+
+export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null)
   const [token, setToken] = useState<string | null>(null)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
@@ -63,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext)
-  if (context === undefined) {
+  if (context === null) {
     throw new Error('useAuth must be used within an AuthProvider')
   }
   return context
