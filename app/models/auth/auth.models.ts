@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import type { User } from './user.models'
+import type { User } from '../user.models'
 
 export const loginSchema = z.object({
   username: z

@@ -5,7 +5,12 @@ import {
   type ReactNode,
   useEffect,
 } from 'react'
-import type { LoginResponse } from '~/models/auth.models'
+import { clearAuthFromSession } from '~/lib/utils'
+import {
+  authTokenSessionKey,
+  authUserSessionKey,
+} from '~/models/auth/auth.constants'
+import { type LoginResponse } from '~/models/auth/auth.models'
 import type { User } from '~/models/user.models'
 
 type AuthContext = {
@@ -14,6 +19,7 @@ type AuthContext = {
   login: (loginResponse: LoginResponse) => void
   logout: () => void
   isAuthenticated: boolean
+  isLoading: boolean
 }
 
 const AuthContext = createContext<AuthContext | null>(null)
@@ -25,42 +31,41 @@ type AuthProviderProps = {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null)
   const [token, setToken] = useState<string | null>(null)
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
-    token !== null
-  )
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+
+  const isAuthenticated = token !== null
 
   useEffect(() => {
-    setIsAuthenticated(token !== null)
-  }, [token])
+    try {
+      const storedToken = sessionStorage.getItem(authTokenSessionKey)
+      const storedUser = sessionStorage.getItem(authUserSessionKey)
 
-  useEffect(() => {
-    console.log('AuthProvider mounted')
-
-    const storedToken = sessionStorage.getItem('authToken')
-    const storedUser = sessionStorage.getItem('authUser')
-
-    if (storedToken && storedUser) {
-      setToken(storedToken)
-      setUser(JSON.parse(storedUser))
+      if (storedToken && storedUser) {
+        setToken(storedToken)
+        setUser(JSON.parse(storedUser))
+      }
+    } catch (error) {
+      console.error('Error loading auth from session:', error)
+    } finally {
+      setIsLoading(false)
     }
   }, [])
 
   const login = ({ user: newUser, token: newToken }: LoginResponse) => {
     setUser(newUser)
     setToken(newToken)
-    sessionStorage.setItem('authUser', JSON.stringify(newUser))
-    sessionStorage.setItem('authToken', newToken)
+    sessionStorage.setItem(authUserSessionKey, JSON.stringify(newUser))
+    sessionStorage.setItem(authTokenSessionKey, newToken)
   }
 
   const logout = () => {
     setUser(null)
     setToken(null)
 
-    sessionStorage.removeItem('authUser')
-    sessionStorage.removeItem('authToken')
+    clearAuthFromSession()
   }
 
-  const value = { user, token, login, logout, isAuthenticated }
+  const value = { user, token, login, logout, isAuthenticated, isLoading }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

@@ -1,3 +1,5 @@
+import type { PaginatedData } from './paginated-data/paginated-data.model'
+
 export const userRoles = ['ADMIN', 'USER'] as const
 export type UserRole = (typeof userRoles)[number]
 
@@ -10,3 +12,5 @@ export type User = {
   role: UserRole
   // devices: Device[]
 }
+
+export type UsersIndexResponse = PaginatedData<Omit<User, 'role'>>

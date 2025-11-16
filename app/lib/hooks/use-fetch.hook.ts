@@ -1,12 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useAuth } from '~/components/auth/AuthProvider'
+import { useAuth } from '~/components/auth/auth-provider'
 import type { FetchMethod } from '~/models/fetch.models'
+import { fetchApi } from '../api'
+import { ResponseError } from '~/models/response-errors/response-error'
+import { useNavigate } from 'react-router'
 
 export default function useFetch<TData = unknown>() {
+  const navigate = useNavigate()
+
   const abortControllerRef = useRef<AbortController | null>(null)
   const isLoadingRef = useRef(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<Error | null>(null)
+  const [error, setError] = useState<ResponseError | null>(null)
   const [response, setResponse] = useState<TData | null>(null)
   const { token } = useAuth()
 
@@ -24,33 +29,24 @@ export default function useFetch<TData = unknown>() {
       abortControllerRef.current = new AbortController()
 
       try {
-        const internalInit: RequestInit = {
+        const data = await fetchApi<TData>(input, method, token, body, {
           ...(init ?? {}),
           signal: abortControllerRef.current?.signal,
-          headers: {
-            'Content-Type': 'application/json',
-            ...(token && { Authorization: `Bearer ${token}` }),
-            ...(init?.headers ?? {}),
-          },
-          method,
-        }
+        })
 
-        if (body) {
-          internalInit.body = JSON.stringify(body)
-        }
-
-        const response = await fetch(input, internalInit)
-
-        // Handle success
-        const data = (await response.json()) as TData
-
-        if (response.ok) {
-          setResponse(data)
-        }
-
+        setResponse(data)
         return data
       } catch (error) {
-        setError(error as Error)
+        if (error instanceof ResponseError) {
+          if (error.getErrorType() === 'UNAUTHORIZED') {
+            navigate('/login')
+          }
+
+          setError(error)
+          throw error
+        }
+
+        setError(new ResponseError())
         throw error
       } finally {
         isLoadingRef.current = false

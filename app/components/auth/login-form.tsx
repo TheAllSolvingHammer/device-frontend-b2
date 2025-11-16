@@ -10,15 +10,16 @@ import {
 import { Button } from '../ui/button'
 import { Field, FieldError, FieldGroup, FieldLabel } from '../ui/field'
 import { Input } from '../ui/input'
-import { Navigate, useLocation, useNavigate } from 'react-router'
-import { useAuth } from './AuthProvider'
+import { useLocation, useNavigate } from 'react-router'
+import { useAuth } from './auth-provider'
+import { useEffect } from 'react'
 import useFetch from '~/lib/hooks/use-fetch.hook'
 import { getApiUrl } from '~/lib/utils'
 import {
   loginSchema,
   type LoginData,
   type LoginResponse,
-} from '~/models/auth.models'
+} from '~/models/auth/auth.models'
 import { Spinner } from '../ui/spinner'
 
 export function LoginForm() {
@@ -38,9 +39,11 @@ export function LoginForm() {
     },
   })
 
-  if (isAuthenticated) {
-    return <Navigate to='/' replace />
-  }
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/', { replace: true })
+    }
+  }, [isAuthenticated, navigate])
 
   const onSubmit = async (data: LoginData) => {
     if (isLoadingRef.current) {
