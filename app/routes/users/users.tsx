@@ -1,4 +1,4 @@
-import { redirect, useLoaderData, useNavigation } from 'react-router'
+import { redirect, useLoaderData } from 'react-router'
 import { fetchApi } from '~/lib/api'
 import type { Route } from './+types/users'
 import type { UsersIndexResponse } from '~/models/user.models'
@@ -18,7 +18,7 @@ import {
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'React Router App' },
-    { name: 'description', content: 'Users' },
+    { name: 'description', content: 'Потребители' },
   ]
 }
 
@@ -39,7 +39,7 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
     if (error instanceof UnauthorizedError) {
       clearAuthFromSession()
 
-      return redirect('/login')
+      throw redirect('/login')
     }
 
     throw error

@@ -9,7 +9,7 @@ import {
 import { useAuth } from '../auth/auth-provider'
 import { Button } from '../ui/button'
 import { cn } from '~/lib/utils'
-import { forwardRef, type ComponentRef, type ElementRef } from 'react'
+import { forwardRef, type ComponentRef } from 'react'
 
 export function Header() {
   const { user, logout } = useAuth()
