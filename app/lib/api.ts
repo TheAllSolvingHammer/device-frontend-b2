@@ -1,4 +1,4 @@
-import type { FetchMethod } from '~/models/fetch.models'
+import type { FetchMethod } from '~/models/fetch/fetch.models'
 import { UnauthorizedError } from '~/models/response-errors/unauthorized-error'
 
 export async function fetchApi<TData = unknown>(

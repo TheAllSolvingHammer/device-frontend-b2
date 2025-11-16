@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useAuth } from '~/components/auth/auth-provider'
-import type { FetchMethod } from '~/models/fetch.models'
 import { fetchApi } from '../api'
 import { ResponseError } from '~/models/response-errors/response-error'
 import { useNavigate } from 'react-router'
+import type { FetchMethod } from '~/models/fetch/fetch.models'
 
 export default function useFetch<TData = unknown>() {
   const navigate = useNavigate()

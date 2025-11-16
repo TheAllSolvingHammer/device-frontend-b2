@@ -1,7 +1,7 @@
 import {
   PaginatedTable,
   PaginatedTableSkeleton,
-} from '~/components/core/paginated-table/paginated-table'
+} from '~/components/core/paginated-table'
 import type { PaginatedTableColumn } from '~/models/paginated-data/paginated-data.model'
 import type { User, UsersIndexResponse } from '~/models/user.models'
 

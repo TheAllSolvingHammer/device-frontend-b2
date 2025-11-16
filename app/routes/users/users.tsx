@@ -13,7 +13,7 @@ import type { ReactNode } from 'react'
 import {
   UsersIndexTable,
   UsersIndexTableSkeleton,
-} from 'users/users-index-table'
+} from '~/users/users-index-table'
 
 export function meta({}: Route.MetaArgs) {
   return [
