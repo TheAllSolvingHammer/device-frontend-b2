@@ -8,6 +8,7 @@ import {
 
 export default [
   route('/login', 'routes/login.tsx'),
+    route('/register', 'routes/register.tsx'),
   layout('components/auth/protected-layout.tsx', [
     index('routes/dashboard.tsx'),
 

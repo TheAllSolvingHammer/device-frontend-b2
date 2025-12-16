@@ -1,5 +1,7 @@
 import type { FetchMethod } from '~/models/fetch/fetch.models'
 import { UnauthorizedError } from '~/models/response-errors/unauthorized-error'
+import type {RegisterErrorResponse} from "~/models/auth/auth.models";
+import {string} from "zod";
 
 export async function fetchApi<TData = unknown>(
   input: URL | RequestInfo,
@@ -28,9 +30,19 @@ export async function fetchApi<TData = unknown>(
     throw new UnauthorizedError()
   }
 
-  const data = (await response.json()) as TData
+  const data = (await response.json()) as TData | RegisterErrorResponse
 
   if (!response.ok) {
+      const errorData=data as RegisterErrorResponse;
+      if(errorData && errorData.validations.length>0) {
+          let message="";
+          const strs=errorData.validations;
+          for (const key in strs) {
+              message+=`${key}: ${errorData.validations[key]}\n`
+          }
+          console.log(message);
+          throw new Error(message)
+      }
     throw new Error('Request failed')
   }
 
